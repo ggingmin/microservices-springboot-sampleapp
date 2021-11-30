@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+
+  accounts:
+    image: ggingmin/accounts:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - ggingbank-network
+
+  loans:
+    image: ggingmin/loans:latest
+    ports:
+      - "8090:8090"
+    networks:
+      - ggingbank-network
+
+  cards:
+    image: ggingmin/cards:latest
+    ports:
+      - "9000:9000"
+    networks:
+      - ggingbank-network
+
+networks:
+  ggingbank-network:
