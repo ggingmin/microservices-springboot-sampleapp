@@ -1,0 +1,67 @@
+version: "3"
+
+services:
+
+  configserver:
+    image: ggingmin/configserver:latest
+    ports:
+      - "8071:8071"
+    networks:
+      - ggingbank-network
+
+  accounts:
+    image: ggingmin/accounts:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 8s
+        max_attempts: 3
+        window: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+
+  loans:
+    image: ggingmin/loans:latest
+    ports:
+      - "8090:8090"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 8s
+        max_attempts: 3
+        window: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+
+  cards:
+    image: ggingmin/cards:latest
+    ports:
+      - "9000:9000"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 8s
+        max_attempts: 3
+        window: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+
+networks:
+  ggingbank-network:
