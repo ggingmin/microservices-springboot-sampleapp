@@ -8,7 +8,16 @@
 
 > The Spring Boot Microservices have been implemented using Spring Cloud, Eureka Server, Docker, and Kubernetes.
 
-## Usage
+## In Progress
+- [x] Bank Accounts, Loans, Cards microservices
+- [x] Config Server
+- [x] Service Discovery agent - Eureka Server
+- [x] Resilience4j
+- [ ] Spring Cloud Gateway
+- [ ] Spring Cloud Sleuth / Zipkin
+- [ ] Monitoring microservices - Prometheus, Grafana
+- [ ] Deployments - Kubernetes
+
 
 
 ## Author
