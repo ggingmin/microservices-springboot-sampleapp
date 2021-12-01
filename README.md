@@ -13,7 +13,7 @@
 - [x] Config Server
 - [x] Service Discovery agent - Eureka Server
 - [x] Resilience4j
-- [ ] Spring Cloud Gateway
+- [x] Spring Cloud Gateway
 - [ ] Spring Cloud Sleuth / Zipkin
 - [ ] Monitoring microservices - Prometheus, Grafana
 - [ ] Deployments - Kubernetes
