@@ -20,7 +20,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 20s
+        delay: 100s
         max_attempts: 3
         window: 60s
     environment:
@@ -102,6 +102,30 @@ services:
         delay: 30s
         max_attempts: 3
         window: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+
+  gatewayserver:
+    image: ggingmin/gatewayserver:latest
+    ports:
+      - "8072:8072"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+      - eurekaserver
+      - cards
+      - loans
+      - accounts_1
+      - accounts_2
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 45s
+        max_attempts: 3
+        window: 180s
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
