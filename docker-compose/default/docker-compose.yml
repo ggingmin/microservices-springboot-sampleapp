@@ -9,10 +9,10 @@ services:
     networks:
       - ggingbank-network
 
-  accounts:
-    image: ggingmin/accounts:latest
+  eurekaserver:
+    image: ggingmin/eurekaserver:latest
     ports:
-      - "8080:8080"
+      - "8070:8070"
     networks:
       - ggingbank-network
     depends_on:
@@ -20,12 +20,52 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 8s
+        delay: 20s
         max_attempts: 3
         window: 60s
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+
+  accounts_1:
+    image: ggingmin/accounts:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+      - eurekaserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+
+  accounts_2:
+    image: ggingmin/accounts:latest
+    ports:
+      - "8081:8080"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+      - eurekaserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
 
   loans:
     image: ggingmin/loans:latest
@@ -35,15 +75,17 @@ services:
       - ggingbank-network
     depends_on:
       - configserver
+      - eurekaserver
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 8s
+        delay: 30s
         max_attempts: 3
         window: 60s
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
 
   cards:
     image: ggingmin/cards:latest
@@ -53,15 +95,17 @@ services:
       - ggingbank-network
     depends_on:
       - configserver
+      - eurekaserver
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 8s
+        delay: 30s
         max_attempts: 3
         window: 60s
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
 
 networks:
   ggingbank-network:
