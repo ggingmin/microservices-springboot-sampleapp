@@ -10,6 +10,7 @@ import com.ggingmin.accounts.service.client.CardsFeignClient;
 import com.ggingmin.accounts.service.client.LoansFeignClient;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class AccountsController {
     CardsFeignClient cardsFeignClient;
 
     @PostMapping("/myAccount")
+    @Timed(value="getAccountDetails.time", description="Time taken to return Account Details")
     public Account getAccountDetails(@RequestBody Customer customer) {
 
         Account account = accountsRepository.findByCustomerId(customer.getCustomerId());

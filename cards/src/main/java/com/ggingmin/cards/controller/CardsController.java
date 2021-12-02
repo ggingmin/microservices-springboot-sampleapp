@@ -8,6 +8,7 @@ import com.ggingmin.cards.model.Card;
 import com.ggingmin.cards.model.Customer;
 import com.ggingmin.cards.model.Properties;
 import com.ggingmin.cards.repository.CardsRepository;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class CardsController {
     private CardsServiceConfig cardsConfig;
 
     @PostMapping("/myCards")
+    @Timed(value="getCardDetails.time", description="Time taken to return Card Details")
     public List<Card> getCardDetails(@RequestBody Customer customer) {
         LOGGER.info("getCardDetails() method started");
         List<Card> cards = cardsRepository.findByCustomerId(customer.getCustomerId());

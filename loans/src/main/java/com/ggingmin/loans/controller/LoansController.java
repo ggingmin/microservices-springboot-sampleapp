@@ -8,6 +8,7 @@ import com.ggingmin.loans.model.Customer;
 import com.ggingmin.loans.model.Loan;
 import com.ggingmin.loans.model.Properties;
 import com.ggingmin.loans.repository.LoansRepository;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class LoansController {
     LoansServiceConfig loansConfig;
 
     @PostMapping("/myLoans")
+    @Timed(value="getLoansDetails.time", description="Time taken to return Loans Details")
     public List<Loan> getLoansDetails(@RequestBody Customer customer) {
         LOGGER.info("getLoansDetails() method started");
         List<Loan> loans = loansRepository.findByCustomerIdOrderByStartDtDesc(customer.getCustomerId());

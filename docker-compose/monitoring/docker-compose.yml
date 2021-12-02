@@ -1,0 +1,205 @@
+version: "3"
+
+services:
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - ggingbank-network
+
+  grafana:
+    image: "grafana/grafana:latest"
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - ggingbank-network
+    depends_on:
+      - prometheus
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - ggingbank-network
+
+  #  rabbitmq:
+  #    image: rabbitmq:3-management
+  #    ports:
+  #      - "5672:5672"
+  #      - "15672:15672"
+  #    networks:
+  #      - ggingbank-network
+
+  configserver:
+    image: ggingmin/configserver:latest
+    ports:
+      - "8071:8071"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - zipkin
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+  #      SPRING_RABBITMQ_USERNAME: guest
+  #      SPRING_RABBITMQ_PASSWORD: guest
+  #      SPRING_RABBITMQ_HOST: rabbitmq
+  #      SPRING_RABBITMQ_PORT: 5672
+
+  eurekaserver:
+    image: ggingmin/eurekaserver:latest
+    ports:
+      - "8761:8761"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 100s
+        max_attempts: 5
+        window: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+  #      SPRING_RABBITMQ_USERNAME: guest
+  #      SPRING_RABBITMQ_PASSWORD: guest
+  #      SPRING_RABBITMQ_HOST: rabbitmq
+  #      SPRING_RABBITMQ_PORT: 5672
+
+  accounts:
+    image: ggingmin/accounts:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+      - eurekaserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 100s
+        max_attempts: 5
+        window: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+  #      SPRING_RABBITMQ_USERNAME: guest
+  #      SPRING_RABBITMQ_PASSWORD: guest
+  #      SPRING_RABBITMQ_HOST: rabbitmq
+  #      SPRING_RABBITMQ_PORT: 5672
+
+#  accounts_2:
+#    image: ggingmin/accounts:latest
+#    ports:
+#      - "8081:8080"
+#    networks:
+#      - ggingbank-network
+#    depends_on:
+#      - configserver
+#      - eurekaserver
+#    deploy:
+#      restart_policy:
+#        condition: on-failure
+#        delay: 100s
+#        max_attempts: 5
+#        window: 60s
+#    environment:
+#      SPRING_PROFILES_ACTIVE: default
+#      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+#      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+  #      SPRING_RABBITMQ_USERNAME: guest
+  #      SPRING_RABBITMQ_PASSWORD: guest
+  #      SPRING_RABBITMQ_HOST: rabbitmq
+  #      SPRING_RABBITMQ_PORT: 5672
+
+  loans:
+    image: ggingmin/loans:latest
+    ports:
+      - "8090:8090"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+      - eurekaserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 100s
+        max_attempts: 5
+        window: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+  #      SPRING_RABBITMQ_USERNAME: guest
+  #      SPRING_RABBITMQ_PASSWORD: guest
+  #      SPRING_RABBITMQ_HOST: rabbitmq
+  #      SPRING_RABBITMQ_PORT: 5672
+
+  cards:
+    image: ggingmin/cards:latest
+    ports:
+      - "9000:9000"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+      - eurekaserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 100s
+        max_attempts: 5
+        window: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+  #      SPRING_RABBITMQ_USERNAME: guest
+  #      SPRING_RABBITMQ_PASSWORD: guest
+  #      SPRING_RABBITMQ_HOST: rabbitmq
+  #      SPRING_RABBITMQ_PORT: 5672
+
+  gatewayserver:
+    image: ggingmin/gatewayserver:latest
+    ports:
+      - "8072:8072"
+    networks:
+      - ggingbank-network
+    depends_on:
+      - configserver
+      - eurekaserver
+      - cards
+      - loans
+      - accounts
+#      - accounts_2
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 100s
+        max_attempts: 5
+        window: 180s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8761/eureka/
+
+networks:
+  ggingbank-network:
