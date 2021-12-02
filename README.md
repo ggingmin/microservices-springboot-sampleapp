@@ -15,8 +15,8 @@
 - [x] Resilience4j
 - [x] Spring Cloud Gateway
 - [x] Spring Cloud Sleuth / Zipkin
-- [x] Monitoring microservices - Prometheus, Grafana
-- [x] Deployments - Kubernetes
+- [ ] Monitoring microservices - Prometheus, Grafana
+- [ ] Deployments - Kubernetes
 
 ## Features to be fixed
 - [ ] Generating HttpHeader correlation id
