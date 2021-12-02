@@ -8,6 +8,8 @@ import com.ggingmin.loans.model.Customer;
 import com.ggingmin.loans.model.Loan;
 import com.ggingmin.loans.model.Properties;
 import com.ggingmin.loans.repository.LoansRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,8 @@ import java.util.List;
 @RestController
 public class LoansController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoansController.class);
+
     @Autowired
     private LoansRepository loansRepository;
 
@@ -27,8 +31,9 @@ public class LoansController {
 
     @PostMapping("/myLoans")
     public List<Loan> getLoansDetails(@RequestBody Customer customer) {
-        System.out.println("Microservice invoked");
+        LOGGER.info("getLoansDetails() method started");
         List<Loan> loans = loansRepository.findByCustomerIdOrderByStartDtDesc(customer.getCustomerId());
+        LOGGER.info("getLoansDetails() method ended");
         if (loans != null) {
             return loans;
         } else {
