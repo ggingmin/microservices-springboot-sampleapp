@@ -14,7 +14,7 @@
 - [x] Service Discovery agent - Eureka Server
 - [x] Resilience4j
 - [x] Spring Cloud Gateway
-- [ ] Spring Cloud Sleuth / Zipkin
+- [x] Spring Cloud Sleuth / Zipkin
 - [ ] Monitoring microservices - Prometheus, Grafana
 - [ ] Deployments - Kubernetes
 
