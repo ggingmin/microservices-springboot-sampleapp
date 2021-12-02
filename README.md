@@ -15,7 +15,7 @@
 - [x] Resilience4j
 - [x] Spring Cloud Gateway
 - [x] Spring Cloud Sleuth / Zipkin
-- [ ] Monitoring microservices - Prometheus, Grafana
+- [x] Monitoring microservices - Prometheus, Grafana
 - [ ] Deployments - Kubernetes
 
 ## Features to be fixed
