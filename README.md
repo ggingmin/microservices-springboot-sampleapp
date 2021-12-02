@@ -16,9 +16,10 @@
 - [x] Spring Cloud Gateway
 - [x] Spring Cloud Sleuth / Zipkin
 - [x] Monitoring microservices - Prometheus, Grafana
-- [ ] Deployments - Kubernetes
+- [x] Deployments - Kubernetes
 
-
+## Features to be fixed
+- [ ] Generating HttpHeader correlation id
 
 ## Author
 
